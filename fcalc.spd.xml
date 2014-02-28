@@ -35,7 +35,7 @@ program.  If not, see http://www.gnu.org/licenses/.
        What operations are supported?  I'm glad you asked...
        The &quot;import&quot; property is a sequence of strings that are imported for you to use in your equation
        The default set-up include both math and random
-       Both &quot;import x&quot; and &quot;from x import * are supported by default.
+       Both &quot;import x&quot; and &quot;from x import *&quot; are supported by default.
        This allows you to use functions like &quot;math.sin(3*a)+cos(4*b)+random.random()&quot;
        If you want to use your own custom methods just write your own custom python module, add it to the imports and you are off and running
        

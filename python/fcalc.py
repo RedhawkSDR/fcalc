@@ -228,7 +228,7 @@ class fcalc_i(fcalc_base):
         dataB, tB, EOS_B, streamID_B, sriB, sriChangedB, inputQueueFlushedB = self.port_b.getPacket()
 
         if inputQueueFlushedA or inputQueueFlushedB:
-            self._log.warning("input Q flushed - data has been thrown on the floor")
+            self._log.warning("input queue flushed - data has been thrown on the floor")
 
         if dataA == None and dataB == None:
             return NOOP
