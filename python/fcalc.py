@@ -54,10 +54,11 @@ class CxPortBULKIODataDoubleOut_i(bulkio.OutDoublePort):
             for x in data:
                 if isinstance(x,complex):
                     convertCx=True
-                    if self.sriDict[streamID].mode==0:
-                        self.sriDict[streamID].mode=1
-                        self.refreshSRI = True
-                    break        
+                    if self.sriDict[streamID].sri.mode==0:
+                        sri = self.sriDict[streamID].sri
+                        sri.mode = 1
+                        self.pushSRI(sri)
+                    break
         if convertCx:
             realData = []
             for x in data:
