@@ -20,10 +20,6 @@
 # AUTO-GENERATED
 #
 # Source: fcalc.spd.xml
-# Generated on: Tue Feb 12 10:24:14 EST 2013
-# Redhawk IDE
-# Version:R.1.8.2
-# Build id: v201212041901
 from ossie.resource import Resource, start_component
 import logging
 from ossie.cf import CF
@@ -136,11 +132,12 @@ class fcalc_i(fcalc_base):
         #call this in case we already have a good equation 
         self.sri = None
         self.streamID = None
-        self.onconfigure_prop_import()
-        self.onconfigure_prop_equation()
         self.firsttime = True
+        
+        self.addPropertyChangeListener("import", self.propChange_import)
+        self.addPropertyChangeListener("equation", self.propChange_equation)
 
-    def onconfigure_prop_import(self,oldval=None,val=None):
+    def propChange_import(self,id,oldval=None,val=None):
         if val!=None:
             fcalc_i.import_.set(self,val)
         for module in self.import_:
@@ -169,30 +166,28 @@ class fcalc_i(fcalc_base):
                                 self.globals[name]=getattr(mod,name)         
 
         
-    def onconfigure_prop_equation(self,oldval=None,val=None):
+    def propChange_equation(self,id,oldval,newval):
         """This is called when "equation" is configured
            check the equation with the regular expression stuff to see if we are using both streams or not    
         """
-        if not val:
-            val = self.equation
-        if val:
-
-            oldVal = str(self.equation)
+        if self.equation != oldval:
+            #oldVal = str(self.equation)
             #set the value for the equation to the new value    
-            fcalc_i.equation.set(self,val)
+            fcalc_i.equation.set(self,self.equation)
             #do a simple test to validate the equation 
             try:
                 self.evaluate(a=1,b=1)
             except Exception, e:
-                print "FCALC - cannot validate equation %s" %val
+                print "FCALC - cannot validate equation %s" %newval
                 self._log.exception(e)
-                fcalc_i.equation.set(self,oldVal)
-                raise CF.PropertySet.InvalidConfiguration('equation "%s" is invalid' %val, [val])
+                fcalc_i.equation.set(self,oldval)
+                self.equation = oldval
+                raise CF.PropertySet.InvalidConfiguration('equation "%s" is invalid' %newval, [newval])
             
-            if val: 
-                aFound = self.findA.search(val)
+            if self.equation: 
+                aFound = self.findA.search(self.equation)
                 self.useA =  bool(aFound)
-                bFound = self.findB.search(val)
+                bFound = self.findB.search(self.equation)
                 self.useB = bool(bFound)
             else:
                 self.useA = False
