@@ -137,9 +137,7 @@ class fcalc_i(fcalc_base):
         self.addPropertyChangeListener("import", self.propChange_import)
         self.addPropertyChangeListener("equation", self.propChange_equation)
 
-    def propChange_import(self,id,oldval=None,val=None):
-        if val!=None:
-            fcalc_i.import_.set(self,val)
+    def propChange_import(self,id,oldval,newval):
         for module in self.import_:
             if not module in self.globals:
                 e = None
@@ -150,7 +148,7 @@ class fcalc_i(fcalc_base):
                     self.globals[module] = mod
                 except Exception, e:
                     print 'FCALC -- ERROR cannot import module "%s"'%module
-                    raise CF.PropertySet.InvalidConfiguration('import "%s" is invalid' %val, [val])
+                    raise CF.PropertySet.InvalidConfiguration('import "%s" is invalid' %newval, [newval])
                 if e==None:
                     #Now add all the stuff into my name space
                     #like "from math import *" 
@@ -171,9 +169,8 @@ class fcalc_i(fcalc_base):
            check the equation with the regular expression stuff to see if we are using both streams or not    
         """
         if self.equation != oldval:
-            #oldVal = str(self.equation)
             #set the value for the equation to the new value    
-            fcalc_i.equation.set(self,self.equation)
+            #fcalc_i.equation.set(self,self.equation)
             #do a simple test to validate the equation 
             try:
                 self.evaluate(a=1,b=1)
