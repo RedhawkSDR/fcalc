@@ -232,13 +232,17 @@ class fcalc_i(fcalc_base):
                 self.streamID = streamID_A
                 if sriB and sriB.mode==1:
                     self.sri.mode=1
+            else:
+                self._log.warning("Unable to use SRI from Input A!")
         else:
             if sriB:
                 self.sri = sriB
                 self.streamID = streamID_B
                 if sriA and sriA.mode==1:
                     self.sri.mode=1
-                        
+            else:
+                self._log.warning("Unable to use SRI from Input B!")
+        
         if  self.firsttime or sriChangedA or sriChangedB :
             if self.sri:
                 self.port_out.pushSRI(self.sri)

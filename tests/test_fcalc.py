@@ -238,21 +238,32 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     def testZeroDiv(self):
         """Test the zero division and validate the component handles it correctly
         """
+        print "\n... running ZeroDiv test"
         out = self.myTestCase("1/a", [float(x) for x in xrange(1024)],[],False)
         self.assertTrue(len(out)==1024)
         self.assertTrue(math.isnan(out[0]))
+
+    def testDefaultConfiguration(self):
+        """Test that default configuration doesn't fail miserably
+        """
+        print "\n... running DefaultConfiguration test"
+        inDataA= [float(x) for x in xrange(1024)]
+        
+        # Skip sri validation - Component only sends SRI on equation change
+        self.myTestCase(None,inDataA,inDataA,checkResults=False, validateSRI=False)
                 
-    def myTestCase(self, testEquation, data1,data2,checkResults=True,data1Cx=False, data2Cx = False):
+    def myTestCase(self, testEquation, data1,data2,checkResults=True,data1Cx=False, data2Cx = False, validateSRI=True):
         """The main engine for all the test cases - configure the equation, push data, and get output
            As applicable
-        """    
+        """
+        streamID = "RandomStreamName"
         if testEquation:
             print "\n... running myTestCase %s" %testEquation
             self.comp.configure(props_from_dict({'equation':testEquation}))
         if data1:
-            self.src1.push(data1,complexData=data1Cx)
+            self.src1.push(data1,complexData=data1Cx, streamID=streamID)
         if data2:
-            self.src2.push(data2,complexData=data2Cx)
+            self.src2.push(data2,complexData=data2Cx, streamID=streamID)
         #data processing is asynchronos - so wait until the data is all processed
         count=0
         while True:
@@ -272,7 +283,13 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
             else:
                 numOut = self.checkResults(testEquation,data1, data2, out)
             self.assertNotEqual(numOut,0)
+
+        if validateSRI:
+            self.validateSRIHandling(streamID)
         return out
+
+    def validateSRIHandling(self, streamID):
+        self.assertEqual(streamID, self.sink.sri().streamID)
     
     def checkResults(self, testEquation, data1,data2,out):        
         """check the results of the calculator to make sure it is as expected
