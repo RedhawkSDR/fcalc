@@ -26,6 +26,8 @@ from ossie.properties import props_from_dict
 from math import cos
 import time
 from ossie.cf import CF
+from numpy import float32
+
 
 class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
     """Test for all component implementations in fcalc"""
@@ -49,7 +51,7 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         #do the connections        
         self.src1.connect(self.comp,'a')
         self.src2.connect(self.comp,'b')
-        self.comp.connect(self.sink,'doubleIn')
+        self.comp.connect(self.sink,'floatIn')
         
     def tearDown(self):
         """Finish the unit test - this is run after every method that starts with test
@@ -297,15 +299,15 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         numTested=0
         if data1 and data2:
             for a,b,o in zip(data1,data2,out):
-                self.assertEqual(eval(testEquation),o)
+                self.assertEqual(float32(eval(testEquation)),float32(o))
                 numTested+=1
         elif data1:
              for a,o in zip(data1,out):
-                 self.assertEqual(eval(testEquation),o)  
+                 self.assertEqual(float32(eval(testEquation)),float32(o))  
                  numTested+=1               
         elif data2:
             for b,o in zip(data2,out):
-                self.assertEqual(eval(testEquation),o)
+                self.assertEqual(float32(eval(testEquation)),float32(o))
                 numTested+=1
         return numTested                 
     

@@ -28,18 +28,18 @@ from fcalc_base import *
 import re
 
 import sys
-class CxPortBULKIODataDoubleIn_i(bulkio.InDoublePort):
+class CxPortBULKIODataFloatIn_i(bulkio.InFloatPort):
     def getPacket(self):
         """Convert data to complex if the mode is set
         """
-        data, T, EOS, streamID, sri, sriChanged, inputQueueFlushed = bulkio.InDoublePort.getPacket(self)
+        data, T, EOS, streamID, sri, sriChanged, inputQueueFlushed = bulkio.InFloatPort.getPacket(self)
         if data !=None and sri !=None:
             if sri.mode==1:
                 data = [complex(*arg) for arg in zip(data[::2],data[1::2])]
         return data, T, EOS, streamID, sri, sriChanged, inputQueueFlushed
    
 
-class CxPortBULKIODataDoubleOut_i(bulkio.OutDoublePort):
+class CxPortBULKIODataFloatOut_i(bulkio.OutFloatPort):
 
     def pushPacket(self, data, T, EOS, streamID, convertCx):
         """Convert data to complex if the mode is set
@@ -65,7 +65,7 @@ class CxPortBULKIODataDoubleOut_i(bulkio.OutDoublePort):
                     realData.append(x)
                     realData.append(0)
             data = realData
-        return bulkio.OutDoublePort.pushPacket(self, data, T, EOS, streamID)
+        return bulkio.OutFloatPort.pushPacket(self, data, T, EOS, streamID)
 
 class fcalc_i(fcalc_base):
     """Implementation for the calculator component
@@ -115,9 +115,9 @@ class fcalc_i(fcalc_base):
           self.some_port = MyPortImplementation()
         """
         Resource.initialize(self)
-        self.port_a = CxPortBULKIODataDoubleIn_i("a", maxsize=self.DEFAULT_QUEUE_SIZE)
-        self.port_b = CxPortBULKIODataDoubleIn_i("b", maxsize=self.DEFAULT_QUEUE_SIZE)
-        self.port_out = CxPortBULKIODataDoubleOut_i("out")       
+        self.port_a = CxPortBULKIODataFloatIn_i("a", maxsize=self.DEFAULT_QUEUE_SIZE)
+        self.port_b = CxPortBULKIODataFloatIn_i("b", maxsize=self.DEFAULT_QUEUE_SIZE)
+        self.port_out = CxPortBULKIODataFloatOut_i("out")       
         
         #take care of the requested imports    
         #we are supporting both syntax for imports

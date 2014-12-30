@@ -32,7 +32,7 @@ sink = sb.DataSink()
 
 src1.connect(c,'a')
 src2.connect(c,'b')
-c.connect(sink,'doubleIn')
+c.connect(sink,'floatIn')
 
 c.equation="math.sin(3*a)+cos(5*b)"
 print c.query([])

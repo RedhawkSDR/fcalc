@@ -50,9 +50,9 @@ class fcalc_base(CF__POA.Resource, Resource, ThreadedComponent):
             # in future releases
             self.auto_start = False
             # Instantiate the default implementations for all ports on this component
-            self.port_a = bulkio.InDoublePort("a", maxsize=self.DEFAULT_QUEUE_SIZE)
-            self.port_b = bulkio.InDoublePort("b", maxsize=self.DEFAULT_QUEUE_SIZE)
-            self.port_out = bulkio.OutDoublePort("out")
+            self.port_a = bulkio.InFloatPort("a", maxsize=self.DEFAULT_QUEUE_SIZE)
+            self.port_b = bulkio.InFloatPort("b", maxsize=self.DEFAULT_QUEUE_SIZE)
+            self.port_out = bulkio.OutFloatPort("out")
 
         def start(self):
             Resource.start(self)
@@ -77,16 +77,16 @@ class fcalc_base(CF__POA.Resource, Resource, ThreadedComponent):
         # or via the IDE.
 
         port_a = providesport(name="a",
-                              repid="IDL:BULKIO/dataDouble:1.0",
+                              repid="IDL:BULKIO/dataFloat:1.0",
                               type_="data")
 
         port_b = providesport(name="b",
-                              repid="IDL:BULKIO/dataDouble:1.0",
+                              repid="IDL:BULKIO/dataFloat:1.0",
                               type_="data")
 
         port_out = usesport(name="out",
-                            repid="IDL:BULKIO/dataDouble:1.0",
-                            type_="control")
+                            repid="IDL:BULKIO/dataFloat:1.0",
+                            type_="data")
 
         ######################################################################
         # PROPERTIES
