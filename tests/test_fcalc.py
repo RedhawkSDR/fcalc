@@ -299,15 +299,15 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         numTested=0
         if data1 and data2:
             for a,b,o in zip(data1,data2,out):
-                self.assertEqual(float32(eval(testEquation)),float32(o))
+                self.assertEqual(float32(eval(testEquation)),o)
                 numTested+=1
         elif data1:
              for a,o in zip(data1,out):
-                 self.assertEqual(float32(eval(testEquation)),float32(o))  
+                 self.assertEqual(float32(eval(testEquation)),o)  
                  numTested+=1               
         elif data2:
             for b,o in zip(data2,out):
-                self.assertEqual(float32(eval(testEquation)),float32(o))
+                self.assertEqual(float32(eval(testEquation)),o)
                 numTested+=1
         return numTested                 
     
