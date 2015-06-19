@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public License along with this 
 # program.  If not, see http://www.gnu.org/licenses/.
 #
-# vim: noet: softtabstop=0
 
-xmldir = $(prefix)/dom/components/fcalc/
+xmldir = $(prefix)/dom/components/rh/fcalc/
 dist_xml_DATA = ../fcalc.scd.xml ../fcalc.prf.xml ../fcalc.spd.xml
-domdir = $(prefix)/dom/components/fcalc/python/
+domdir = $(prefix)/dom/components/rh/fcalc/python/
 
 distclean-local:
 	rm -f config.*

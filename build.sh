@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
 # source distribution.
@@ -19,12 +19,12 @@
 
 if [ "$1" = "rpm" ]; then
     # A very simplistic RPM build scenario
-    if [ -e fcalc.spec ]; then
+    if [ -e rh.fcalc.spec ]; then
         mydir=`dirname $0`
         tmpdir=`mktemp -d`
-        cp -r ${mydir} ${tmpdir}/fcalc-2.0.0
-        tar czf ${tmpdir}/fcalc-2.0.0.tar.gz --exclude=".svn" -C ${tmpdir} fcalc-2.0.0
-        rpmbuild -ta ${tmpdir}/fcalc-2.0.0.tar.gz
+        cp -r ${mydir} ${tmpdir}/rh.fcalc-2.0.0
+        tar czf ${tmpdir}/rh.fcalc-2.0.0.tar.gz --exclude=".svn" -C ${tmpdir} rh.fcalc-2.0.0
+        rpmbuild -ta ${tmpdir}/rh.fcalc-2.0.0.tar.gz
         rm -rf $tmpdir
     else
         echo "Missing RPM spec file in" `pwd`
@@ -34,7 +34,19 @@ else
     for impl in python ; do
         cd $impl
         if [ -e build.sh ]; then
-            ./build.sh $*
+            if [ $# == 1 ]; then
+                if [ $1 == 'clean' ]; then
+                    rm -f Makefile
+                    rm -f config.*
+                    ./build.sh distclean
+                else
+                    ./build.sh $*
+                fi
+            else
+                ./build.sh $*
+            fi
+        elif [ -e Makefile ] && [ Makefile.am -ot Makefile ]; then
+            make $*
         elif [ -e reconf ]; then
             ./reconf && ./configure && make $*
         else

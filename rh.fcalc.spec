@@ -27,7 +27,7 @@ Prefix:         %{_prefix}
 %define _mandir        %{_prefix}/man
 %define _infodir       %{_prefix}/info
 
-Name:           fcalc
+Name:           rh.fcalc
 Version:        2.0.0
 Release:        1%{?dist}
 Summary:        Component %{name}
@@ -46,6 +46,7 @@ Requires:       bulkioInterfaces
 
 BuildArch: noarch
 
+
 %description
 Component %{name}
  * Commit: __REVISION__
@@ -60,7 +61,7 @@ Component %{name}
 # Implementation python
 pushd python
 ./reconf
-%define _bindir %{_prefix}/dom/components/fcalc/python
+%define _bindir %{_prefix}/dom/components/rh/fcalc/python
 %configure
 make %{?_smp_mflags}
 popd
@@ -70,7 +71,7 @@ popd
 rm -rf $RPM_BUILD_ROOT
 # Implementation python
 pushd python
-%define _bindir %{_prefix}/dom/components/fcalc/python
+%define _bindir %{_prefix}/dom/components/rh/fcalc/python
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
 
@@ -81,9 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,redhawk,redhawk,-)
-%dir %{_prefix}/dom/components/%{name}
-%{_prefix}/dom/components/%{name}/fcalc.scd.xml
-%{_prefix}/dom/components/%{name}/fcalc.prf.xml
-%{_prefix}/dom/components/%{name}/fcalc.spd.xml
-%{_prefix}/dom/components/%{name}/python
+%dir %{_prefix}/dom/components/rh/fcalc
+%{_prefix}/dom/components/rh/fcalc/fcalc.scd.xml
+%{_prefix}/dom/components/rh/fcalc/fcalc.prf.xml
+%{_prefix}/dom/components/rh/fcalc/fcalc.spd.xml
+%{_prefix}/dom/components/rh/fcalc/python
 
