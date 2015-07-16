@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE softpkg PUBLIC "-//JTRS//DTD SCA V2.2.2 SPD//EN" "softpkg.dtd">
 <!-- 
 This file is protected by Copyright. Please refer to the COPYRIGHT file distributed with this 
@@ -17,26 +17,26 @@ PURPOSE.  See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with this 
 program.  If not, see http://www.gnu.org/licenses/.
 -->
-<softpkg id="DCE:c71a7fe6-16d3-11e5-95c8-3417ebc4aab5" name="rh.fcalc" type="sca_compliant" version="2.0.0">
-  <title/>
+<softpkg id="DCE:c71a7fe6-16d3-11e5-95c8-3417ebc4aab5" name="rh.fcalc" type="2.0.0" version="2.0.0">
+  <title></title>
   <author>
     <name>null</name>
   </author>
   <description>This component allows users to perform calculations on one or two input streams simultaneously on an element by element basis.
-       Set the equation property for the function you wish to calculate with the variable "a" as the first input and "b" as the second input.
+       Set the equation property for the function you wish to calculate with the variable &quot;a&quot; as the first input and &quot;b&quot; as the second input.
 
-       For example "3*a+4*b" is a valid equation using both a and b
+       For example &quot;3*a+4*b&quot; is a valid equation using both a and b
        for input a = [0,1,2,3,4] and b = [4,3,2,1,0] the output from the component would be
        out = [3*0+4*4, 3*1+4*3, 3*2+4*2, 3*3+4*1, 3*4+4*0] = [16,15,14,13,12]
 
        You can also use just a or b as follows:
-       "3*a" or ".2*b"
+       &quot;3*a&quot; or &quot;.2*b&quot;
 
        What operations are supported?  I'm glad you asked...
-       The "import" property is a sequence of strings that are imported for you to use in your equation
+       The &quot;import&quot; property is a sequence of strings that are imported for you to use in your equation
        The default set-up include both math and random
-       Both "import x" and "from x import *" are supported by default.
-       This allows you to use functions like "math.sin(3*a)+cos(4*b)+random.random()"
+       Both &quot;import x&quot; and &quot;from x import *&quot; are supported by default.
+       This allows you to use functions like &quot;math.sin(3*a)+cos(4*b)+random.random()&quot;
        If you want to use your own custom methods just write your own custom python module, add it to the imports and you are off and running
 
        Finally - a word to the wise...with great power comes great responsibility
