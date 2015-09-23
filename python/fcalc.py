@@ -219,6 +219,13 @@ class fcalc_i(fcalc_base):
         """
         dataA, tA, EOS_A, streamID_A, sriA, sriChangedA, inputQueueFlushedA = self.port_a.getPacket()
         dataB, tB, EOS_B, streamID_B, sriB, sriChangedB, inputQueueFlushedB = self.port_b.getPacket()
+        
+        # only one of the data sets made it. Wait for the other one
+        if (not (dataA == None and dataB == None)) and (dataA == None or dataB == None):
+            while dataA == None:
+                dataA, tA, EOS_A, streamID_A, sriA, sriChangedA, inputQueueFlushedA = self.port_a.getPacket()
+            while dataB == None:
+                dataB, tB, EOS_B, streamID_B, sriB, sriChangedB, inputQueueFlushedB = self.port_b.getPacket()
 
         if inputQueueFlushedA or inputQueueFlushedB:
             self._log.warning("input queue flushed - data has been thrown on the floor")
