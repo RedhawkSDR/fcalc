@@ -220,13 +220,6 @@ class fcalc_i(fcalc_base):
         dataA, tA, EOS_A, streamID_A, sriA, sriChangedA, inputQueueFlushedA = self.port_a.getPacket()
         dataB, tB, EOS_B, streamID_B, sriB, sriChangedB, inputQueueFlushedB = self.port_b.getPacket()
         
-        # only one of the data sets made it. Wait for the other one
-        if (not (dataA == None and dataB == None)) and (dataA == None or dataB == None):
-            while dataA == None:
-                dataA, tA, EOS_A, streamID_A, sriA, sriChangedA, inputQueueFlushedA = self.port_a.getPacket()
-            while dataB == None:
-                dataB, tB, EOS_B, streamID_B, sriB, sriChangedB, inputQueueFlushedB = self.port_b.getPacket()
-
         if inputQueueFlushedA or inputQueueFlushedB:
             self._log.warning("input queue flushed - data has been thrown on the floor")
 
@@ -239,7 +232,7 @@ class fcalc_i(fcalc_base):
                 self.streamID = streamID_A
                 if sriB and sriB.mode==1:
                     self.sri.mode=1
-            else:
+            elif not self.sri:
                 self._log.warning("Unable to use SRI from Input A!")
         else:
             if sriB:
@@ -247,7 +240,7 @@ class fcalc_i(fcalc_base):
                 self.streamID = streamID_B
                 if sriA and sriA.mode==1:
                     self.sri.mode=1
-            else:
+            elif not self.sri:
                 self._log.warning("Unable to use SRI from Input B!")
         
         if  self.firsttime or sriChangedA or sriChangedB :
@@ -261,10 +254,12 @@ class fcalc_i(fcalc_base):
             if dataA:
                 self.oldA.extend(dataA)
             dataA = self.oldA
+            self.oldA = []
         elif self.oldB:
             if dataB:
                 self.oldB.extend(dataB)
             dataB = self.oldB
+            self.oldB = []
         
         if dataA and dataB:
             #lets do the math here
