@@ -234,6 +234,8 @@ class fcalc_i(fcalc_base):
                     self.sri.mode=1
             elif not self.sri:
                 self._log.warning("Unable to use SRI from Input A!")
+            else:
+                self._log.info("Unable to use SRI from Input A, using cached SRI.")
         else:
             if sriB:
                 self.sri = sriB
@@ -242,6 +244,8 @@ class fcalc_i(fcalc_base):
                     self.sri.mode=1
             elif not self.sri:
                 self._log.warning("Unable to use SRI from Input B!")
+            else:
+                self._log.info("Unable to use SRI from Input B, using cached SRI.")
         
         if  self.firsttime or sriChangedA or sriChangedB :
             if self.sri:
