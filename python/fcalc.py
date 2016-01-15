@@ -138,30 +138,49 @@ class fcalc_i(fcalc_base):
         self.addPropertyChangeListener("equation", self.propChange_equation)
 
     def propChange_import(self,id,oldval,newval):
-        for module in self.import_:
-            if not module in self.globals:
-                e = None
-                try:
-                    #do the standard imports - this is equivalent to the statement:
-                    #"import math"
-                    mod = __import__(module)
-                    self.globals[module] = mod
-                except Exception, e:
-                    print 'FCALC -- ERROR cannot import module "%s"'%module
-                    raise CF.PropertySet.InvalidConfiguration('import "%s" is invalid' %newval, [newval])
-                if e==None:
-                    #Now add all the stuff into my name space
-                    #like "from math import *" 
-                    for name in dir(mod):
-                        if not name.startswith('_'):
-                            if name in self.globals:
-                                #if we already have the method in in global dictionary - don't trample on it
-                                #for example the module random has a method called random
-                                #we choose to make "random" in the equation refer to the MODULE not the METHOD
-                                #as things are done on a first come first serve basis
-                                print "FCALC -- WARNING - NOT overriding global namespace with %s from %s" %(name, module)
-                            else:    
-                                self.globals[name]=getattr(mod,name)         
+        if newval and type(newval) == str:
+            self._log.error('The value "%s" is a string; configure with a SEQUENCE of strings.',newval)
+            raise CF.PropertySet.InvalidConfiguration('The value "%s" is a string; configure with a SEQUENCE of strings.' %newval, [newval])
+        
+        try:
+            for module in newval:
+                if not module in self.globals:
+                    try:
+                        #do the standard imports - this is equivalent to the statement:
+                        #"import math"
+                        mod = __import__(module)
+                        self.globals[module] = mod
+                    except ImportError, e:
+                        self._log.error('Cannot import module "%s" due to ImportError',module)
+                        raise CF.PropertySet.InvalidConfiguration('import "%s" is invalid; Cannot import module "%s" due to ImportError'%(newval,module), [newval])
+                    except TypeError, e:
+                        self._log.error('Cannot import module "%s" due to TypeError. Module must be a string.',module)
+                        raise CF.PropertySet.InvalidConfiguration('import "%s" is invalid; Cannot import module "%s" due to TypeError. Module must be a string.'%(newval,module), [newval])
+                    except:
+                        self._log.error('Unknown exception while trying to import module "%s"',module)
+                        raise CF.PropertySet.InvalidConfiguration('import "%s" is invalid; Unknown exception during import of module "%s"'%(newval,module), [newval])
+                    else:
+                        #Now add all the stuff into my name space
+                        #like "from math import *" 
+                        for name in dir(mod):
+                            if not name.startswith('_'):
+                                if name in self.globals:
+                                    #if we already have the method in in global dictionary - don't trample on it
+                                    #for example the module random has a method called random
+                                    #we choose to make "random" in the equation refer to the MODULE not the METHOD
+                                    #as things are done on a first come first serve basis
+                                    self._log.warn("NOT overriding global namespace with %s from %s", name, module)
+                                else:    
+                                    self.globals[name]=getattr(mod,name)
+        except CF.PropertySet.InvalidConfiguration, e:
+            raise e
+        except TypeError:
+            self._log.error('The value "%s" is not iterable; configure with a SEQUENCE of imports.',newval)
+            raise CF.PropertySet.InvalidConfiguration('The value "%s" is not iterable; configure with a SEQUENCE of imports.' %newval, [newval])
+        except:
+            self._log.error('Exception while trying to import "%s"',newval)
+            raise CF.PropertySet.InvalidConfiguration('Exception while trying to import "%s"' %newval, [newval])
+             
 
         
     def propChange_equation(self,id,oldval,newval):
@@ -175,7 +194,7 @@ class fcalc_i(fcalc_base):
             try:
                 self.evaluate(a=1,b=1)
             except Exception, e:
-                print "FCALC - cannot validate equation %s" %newval
+                self._log.error("Cannot validate equation %s", newval)
                 self._log.exception(e)
                 fcalc_i.equation.set(self,oldval)
                 self.equation = oldval

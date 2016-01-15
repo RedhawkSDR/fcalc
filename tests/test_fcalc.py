@@ -237,6 +237,21 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         except Exception, e:
             raise e
 
+    def testBadImport(self):
+        """Do a test with various import values known to be bad to verify we have an invalid configuration
+        """
+        print "\n... running testBadImport"
+        print "FYI: A successful test will also cause stack traces to be displayed"
+        for val in [None, 6, 6.6, 'foo', 'math', [6], ['foo'], [None] ]:
+            try:
+                self.comp.configure(props_from_dict({'import':val}))
+            except CF.PropertySet.InvalidConfiguration, e:
+                continue 
+            except Exception, e:
+                raise e
+            else:
+                self.assertTrue(False) # Configure succeeded without exception, which is incorrect.
+
     def testZeroDiv(self):
         """Test the zero division and validate the component handles it correctly
         """
