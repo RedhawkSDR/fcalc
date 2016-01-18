@@ -22,7 +22,7 @@ from ossie.utils import sb
 import os
 from omniORB import any
 import math
-from ossie.properties import props_from_dict
+from ossie.properties import props_from_dict, props_to_dict
 from math import cos
 import time
 from ossie.cf import CF
@@ -237,20 +237,48 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         except Exception, e:
             raise e
 
+    def testImport(self):
+        """Do a test with a valid import
+        """
+        print "\n... running testImport"
+        self.comp.configure(props_from_dict({'import':['time']}))
+        # This produces the GMT year of seconds since epoch
+        self.myTestCase("time.gmtime(a)[0]*1.0", [float(x*60*60*24*5) for x in xrange(1024)],[])
+        
+    def testNoneImport(self):
+        """Do a test with import configured to None rather than a sequence
+        """
+        print "\n... running testNoneImport"
+        self.comp.configure(props_from_dict({'import':None}))
+        props=props_to_dict(self.comp.query(props_from_dict({})))
+        self.assertEqual(props['import'],[],
+                         '"import" property set to "%s" (instead of empty sequence) after configured with "None".'%props['import'])
+
+    def testEmptyStringImport(self):
+        """Do a test with import configured to "" (empty string) rather than a sequence
+        """
+        print "\n... running testEmptyStringImport"
+        self.comp.configure(props_from_dict({'import':''}))
+        props=props_to_dict(self.comp.query(props_from_dict({})))
+        self.assertEqual(props['import'],[],
+                         '"import" property set to "%s" (instead of empty sequence) after configured with empty string.'%props['import'])
+
     def testBadImport(self):
         """Do a test with various import values known to be bad to verify we have an invalid configuration
         """
         print "\n... running testBadImport"
         print "FYI: A successful test will also cause stack traces to be displayed"
-        for val in [None, 6, 6.6, 'foo', 'math', [6], ['foo'], [None] ]:
+        for val in [6, 6.6, 'foo', 'time', [6], ['foo'], [None] ]:
             try:
                 self.comp.configure(props_from_dict({'import':val}))
             except CF.PropertySet.InvalidConfiguration, e:
                 continue 
             except Exception, e:
+                print 'Configure of import with "%s" did not produce InvalidConfiguration exception, but should.'%val
                 raise e
             else:
-                self.assertTrue(False) # Configure succeeded without exception, which is incorrect.
+                print 'Configure of import with "%s" did not produce InvalidConfiguration exception, but should.'%val
+                self.assertTrue(False, 'Configure of import with "%s" did not produce InvalidConfiguration exception, but should.'%val) 
 
     def testZeroDiv(self):
         """Test the zero division and validate the component handles it correctly

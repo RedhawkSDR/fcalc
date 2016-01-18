@@ -138,7 +138,11 @@ class fcalc_i(fcalc_base):
         self.addPropertyChangeListener("equation", self.propChange_equation)
 
     def propChange_import(self,id,oldval,newval):
-        if newval and type(newval) == str:
+        # Treat None and empty string as an empty sequence
+        if newval == None or newval == '':
+            self.import_=[]
+            return
+        elif type(newval) == str:
             self._log.error('The value "%s" is a string; configure with a SEQUENCE of strings.',newval)
             raise CF.PropertySet.InvalidConfiguration('The value "%s" is a string; configure with a SEQUENCE of strings.' %newval, [newval])
         
