@@ -6,7 +6,7 @@ Contains the source and build script for the REDHAWK Basic Components rh.fcalc. 
        Set the equation property for the function you wish to calculate with the variable &quot;a&quot; as the first input and &quot;b&quot; as the second input.
  
 ## Installation Instructions
-To build from source, run the `build.sh` script found at the top level directory. To install to $SDRROOT run, `build.sh install`
+To build from source, run the `build.sh` script found at the top level directory. To install to $SDRROOT, run `build.sh install`
 
 ## Copyrights
 
