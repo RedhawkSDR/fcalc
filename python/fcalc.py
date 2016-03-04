@@ -139,7 +139,7 @@ class fcalc_i(fcalc_base):
 
     def propChange_import(self,id,oldval,newval):
         # Treat None and empty string as an empty sequence
-        if newval == None or newval == '':
+        if newval == None:
             self.import_=[]
             return
         elif type(newval) == str:
