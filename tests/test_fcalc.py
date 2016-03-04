@@ -254,21 +254,12 @@ class ComponentTests(ossie.utils.testing.ScaComponentTestCase):
         self.assertEqual(props['import'],[],
                          '"import" property set to "%s" (instead of empty sequence) after configured with "None".'%props['import'])
 
-    def testEmptyStringImport(self):
-        """Do a test with import configured to "" (empty string) rather than a sequence
-        """
-        print "\n... running testEmptyStringImport"
-        self.comp.configure(props_from_dict({'import':''}))
-        props=props_to_dict(self.comp.query(props_from_dict({})))
-        self.assertEqual(props['import'],[],
-                         '"import" property set to "%s" (instead of empty sequence) after configured with empty string.'%props['import'])
-
     def testBadImport(self):
         """Do a test with various import values known to be bad to verify we have an invalid configuration
         """
         print "\n... running testBadImport"
         print "FYI: A successful test will also cause stack traces to be displayed"
-        for val in [6, 6.6, 'foo', 'time', [6], ['foo'], [None] ]:
+        for val in [6, 6.6, 'foo', 'time', [6], [6.6], ['foo'], [None], '' ]:
             try:
                 self.comp.configure(props_from_dict({'import':val}))
             except CF.PropertySet.InvalidConfiguration, e:
