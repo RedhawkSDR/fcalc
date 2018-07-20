@@ -29,7 +29,7 @@ Prefix:         %{_prefix}
 
 Name:           rh.fcalc
 Version:        2.0.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Component %{name}
 
 Group:          REDHAWK/Components
