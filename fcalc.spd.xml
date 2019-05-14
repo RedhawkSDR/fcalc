@@ -58,7 +58,7 @@ program.  If not, see http://www.gnu.org/licenses/.
     </code>
     <programminglanguage name="Python"/>
     <humanlanguage name="EN"/>
-    <runtime name="python" version="2.4.4"/>
+    <runtime name="python" version="2.6.6"/>
     <os name="Linux"/>
   </implementation>
 </softpkg>
