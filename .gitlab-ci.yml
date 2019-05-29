@@ -1,6 +1,7 @@
 variables:
-  rh_20_release: '2.0.8'
-  rh_21_release: '2.1.3'
+  rh_20_release: '2-0-8'
+  rh_22_release: '2-2-0'
+  rh_23_release: '2-3-0'
   namespace: rh.
   test_suite: test_$CI_PROJECT_NAME.py
 
@@ -20,7 +21,7 @@ before_script:
         redhawk_version=${release_version}
         rpm_release="`rpm --query --queryformat "%{release}\n" --specfile ${namespace}$CI_PROJECT_NAME.spec | head -n 1 | awk -F"." "{print $1}"`.rh${safe_version}";
       fi
-    - redhawk_repo=$yum_repo_url/redhawk-core-framework/$redhawk_version/$dist/$arch
+    - redhawk_repo=$s3_repo_url/redhawk/cf-and-deps/yum/$redhawk_version/$dist/$arch
 
 .package: &package
   image: ${docker_registry}${docker_rpm_repository}docker:latest-rpm
@@ -29,6 +30,9 @@ before_script:
     - ca
     - docker
   script:
+    - datetime=$(git show -s --format=%ci ${CI_COMMIT_SHA})
+    - sed -i -e "s/__REVISION__/${CI_COMMIT_SHA}/" ${namespace}$CI_PROJECT_NAME.spec
+    - sed -i -e "s/__DATETIME__/${datetime}/" ${namespace}$CI_PROJECT_NAME.spec
     - printf "FROM ${docker_registry}${rpmbuild_repository}rpmbuild:$dist-$arch-onbuild" > Dockerfile
     - docker login ${docker_registry} -u ${docker_user} -p ${docker_password}
     - docker image build --pull
@@ -42,6 +46,7 @@ before_script:
     - docker container cp $id:/root/rpmbuild/RPMS/ output/
     - docker container rm -f $id || true
     - docker image rm -f $CI_PROJECT_PATH_SLUG-$safe_ref-$dist-$arch-rh${safe_version} || true
+    - rpm -qip output/*/*.rpm
   artifacts:
     paths:
       - output/*/*.rpm
@@ -88,7 +93,7 @@ before_script:
 
 package:el6:rh2.0:
   variables:
-    latest_version: 2.0-nightly
+    latest_version: develop-2-0
     release_version: $rh_20_release
     short_version: '2.0'
     dist: el6
@@ -97,7 +102,7 @@ package:el6:rh2.0:
 
 package:el6-i386:rh2.0:
   variables:
-    latest_version: 2.0-nightly
+    latest_version: develop-2-0
     release_version: $rh_20_release
     short_version: '2.0'
     dist: el6
@@ -106,43 +111,52 @@ package:el6-i386:rh2.0:
 
 package:el7:rh2.0:
   variables:
-    latest_version: 2.0-nightly
+    latest_version: develop-2-0
     release_version: $rh_20_release
     short_version: '2.0'
     dist: el7
     arch: x86_64
   <<: *package
 
-package:el6:rh2.1:
+package:el6:rh2.2:
   variables:
-    latest_version: 2.1-nightly
-    release_version: $rh_21_release
-    short_version: '2.1'
+    latest_version: develop-2-2
+    release_version: $rh_22_release
+    short_version: '2.2'
     dist: el6
     arch: x86_64
   <<: *package
 
-package:el6-i386:rh2.1:
+package:el7:rh2.2:
   variables:
-    latest_version: 2.1-nightly
-    release_version: $rh_21_release
-    short_version: '2.1'
-    dist: el6
-    arch: i686
+    latest_version: develop-2-2
+    release_version: $rh_22_release
+    short_version: '2.2'
+    dist: el7
+    arch: x86_64
   <<: *package
 
-package:el7:rh2.1:
+package:el6:rh2.3:
   variables:
-    latest_version: 2.1-nightly
-    release_version: $rh_21_release
-    short_version: '2.1'
+    latest_version: develop
+    release_version: $rh_23_release
+    short_version: '2.3'
+    dist: el6
+    arch: x86_64
+  <<: *package
+
+package:el7:rh2.3:
+  variables:
+    latest_version: develop
+    release_version: $rh_23_release
+    short_version: '2.3'
     dist: el7
     arch: x86_64
   <<: *package
 
 test:el6:rh2.0:
   variables:
-    latest_version: 2.0-nightly
+    latest_version: develop-2-0
     release_version: $rh_20_release
     short_version: '2.0'
     dist: el6
@@ -153,7 +167,7 @@ test:el6:rh2.0:
 
 test:el6-i386:rh2.0:
   variables:
-    latest_version: 2.0-nightly
+    latest_version: develop-2-0
     release_version: $rh_20_release
     short_version: '2.0'
     dist: el6
@@ -162,36 +176,45 @@ test:el6-i386:rh2.0:
 
 test:el7:rh2.0:
   variables:
-    latest_version: 2.0-nightly
+    latest_version: develop-2-0
     release_version: $rh_20_release
     short_version: '2.0'
     dist: el7
     arch: x86_64
   <<: *test
 
-test:el6:rh2.1:
+test:el6:rh2.2:
   variables:
-    latest_version: 2.1-nightly
-    release_version: $rh_21_release
-    short_version: '2.1'
+    latest_version: develop-2-2
+    release_version: $rh_22_release
+    short_version: '2.2'
     dist: el6
     arch: x86_64
   <<: *test
 
-test:el6-i386:rh2.1:
+test:el7:rh2.2:
   variables:
-    latest_version: 2.1-nightly
-    release_version: $rh_21_release
-    short_version: '2.1'
-    dist: el6
-    arch: i686
+    latest_version: develop-2-2
+    release_version: $rh_22_release
+    short_version: '2.2'
+    dist: el7
+    arch: x86_64
   <<: *test
 
-test:el7:rh2.1:
+test:el6:rh2.3:
   variables:
-    latest_version: 2.1-nightly
-    release_version: $rh_21_release
-    short_version: '2.1'
+    latest_version: develop
+    release_version: $rh_23_release
+    short_version: '2.3'
+    dist: el6
+    arch: x86_64
+  <<: *test
+
+test:el7:rh2.3:
+  variables:
+    latest_version: develop
+    release_version: $rh_23_release
+    short_version: '2.3'
     dist: el7
     arch: x86_64
   <<: *test
@@ -224,14 +247,27 @@ deploy:
       done
     - repomanage --keep=2 --old $arch| xargs rm -f; createrepo --update $arch
     - /usr/bin/s3cmd sync -F -v --delete-removed $arch s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_SLUG/rh${short_version}/$dist/  && s3cmd setacl -v s3://$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/yum/$CI_COMMIT_REF_SLUG/rh${short_version}/$dist --acl-public --recursive || true
+  except:
+    - master
+    - /^.*-external$/
+    - /^(\d+\.)?(\d+)?(\.\d+)$/
 
-deploy-el7-2.1:
+deploy-el7-2.3:
   variables:
     dist: el7
     arch: x86_64
-    short_version: '2.1'
+    short_version: '2.3'
   dependencies:
-    - package:el7:rh2.1
+    - package:el7:rh2.3
+  <<: *s3
+
+deploy-el7-2.2:
+  variables:
+    dist: el7
+    arch: x86_64
+    short_version: '2.2'
+  dependencies:
+    - package:el7:rh2.2
   <<: *s3
 
 deploy-el7-2.0:
@@ -243,13 +279,22 @@ deploy-el7-2.0:
     - package:el7:rh2.0
   <<: *s3
 
-deploy-el6-2.1:
+deploy-el6-2.3:
   variables:
     dist: el6
     arch: x86_64
-    short_version: '2.1'
+    short_version: '2.3'
   dependencies:
-    - package:el6:rh2.1
+    - package:el6:rh2.3
+  <<: *s3
+
+deploy-el6-2.2:
+  variables:
+    dist: el6
+    arch: x86_64
+    short_version: '2.2'
+  dependencies:
+    - package:el6:rh2.2
   <<: *s3
 
 deploy-el6-2.0:
@@ -259,15 +304,6 @@ deploy-el6-2.0:
     short_version: '2.0'
   dependencies:
     - package:el6:rh2.0
-  <<: *s3
-
-deploy-el6-i386-2.1:
-  variables:
-    dist: el6
-    arch: i686
-    short_version: '2.1'
-  dependencies:
-    - package:el6-i386:rh2.1
   <<: *s3
 
 deploy-el6-i386-2.0:
